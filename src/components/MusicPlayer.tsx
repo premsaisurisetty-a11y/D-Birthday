@@ -64,6 +64,18 @@ const MusicPlayer = () => {
     }
   };
 
+  // Expose a global method to force play (used by Hero button)
+  useEffect(() => {
+    (window as any).forcePlayMusic = () => {
+      if (!isPlaying && audioRef.current) {
+        audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
+      }
+    };
+    return () => {
+      delete (window as any).forcePlayMusic;
+    };
+  }, [isPlaying]);
+
   return (
     <>
       <audio ref={audioRef} src={MUSIC_URL} loop />

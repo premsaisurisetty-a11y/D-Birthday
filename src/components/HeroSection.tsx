@@ -4,6 +4,9 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
   const scrollToMemories = () => {
+    if (typeof (window as any).forcePlayMusic === 'function') {
+      (window as any).forcePlayMusic();
+    }
     document.getElementById("surprise")?.scrollIntoView({ behavior: "smooth" });
   };
 
