@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
@@ -6,28 +7,65 @@ const HeroSection = () => {
     document.getElementById("memories")?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const balloons = useMemo(() =>
+    Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      left: 5 + Math.random() * 90,
+      delay: Math.random() * 6,
+      duration: 8 + Math.random() * 6,
+      size: 30 + Math.random() * 25,
+      color: ["hsl(340 80% 75%)", "hsl(280 40% 75%)", "hsl(40 90% 70%)", "hsl(200 60% 70%)", "hsl(340 60% 85%)"][Math.floor(Math.random() * 5)],
+    })), []);
+
+  const confetti = useMemo(() =>
+    Array.from({ length: 25 }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 4 + Math.random() * 4,
+      size: 6 + Math.random() * 8,
+      emoji: ["✨", "🌸", "💕", "⭐", "🎀"][Math.floor(Math.random() * 5)],
+    })), []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img src={heroBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "var(--gradient-hero)", opacity: 0.7 }} />
+        <div className="absolute inset-0" style={{ background: "var(--gradient-hero)", opacity: 0.75 }} />
       </div>
 
-      {/* Sparkles */}
-      {Array.from({ length: 20 }).map((_, i) => (
+      {/* Floating Balloons */}
+      {balloons.map((b) => (
         <span
-          key={i}
-          className="absolute animate-sparkle text-accent"
+          key={b.id}
+          className="absolute animate-float-balloon pointer-events-none"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            fontSize: `${6 + Math.random() * 10}px`,
-            "--duration": `${2 + Math.random() * 4}s`,
-            "--delay": `${Math.random() * 5}s`,
+            left: `${b.left}%`,
+            bottom: "-10%",
+            fontSize: `${b.size}px`,
+            "--duration": `${b.duration}s`,
+            "--delay": `${b.delay}s`,
           } as React.CSSProperties}
         >
-          ✦
+          🎈
+        </span>
+      ))}
+
+      {/* Soft confetti */}
+      {confetti.map((c) => (
+        <span
+          key={`c-${c.id}`}
+          className="absolute animate-sparkle pointer-events-none"
+          style={{
+            left: `${c.left}%`,
+            top: `${Math.random() * 100}%`,
+            fontSize: `${c.size}px`,
+            "--duration": `${2 + Math.random() * 4}s`,
+            "--delay": `${c.delay}s`,
+          } as React.CSSProperties}
+        >
+          {c.emoji}
         </span>
       ))}
 
@@ -48,17 +86,18 @@ const HeroSection = () => {
           transition={{ duration: 1.2, delay: 0.6 }}
           className="font-display text-5xl md:text-7xl lg:text-8xl text-foreground mb-6 leading-tight"
         >
-          Happy Birthday,{" "}
-          <span className="text-gradient-romantic">My Love</span> ❤️
+          Happy Birthday{" "}
+          <span className="text-gradient-romantic">Delisha</span> ❤️
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
-          className="text-muted-foreground font-body text-xl md:text-2xl italic mb-12"
+          className="text-muted-foreground font-body text-xl md:text-2xl italic mb-12 leading-relaxed"
         >
-          This little corner of the internet is only for you.
+          You are the most beautiful soul I know. Your smile lights up my world,
+          and every moment with you is a treasure I hold close to my heart. 💕
         </motion.p>
 
         <motion.button
