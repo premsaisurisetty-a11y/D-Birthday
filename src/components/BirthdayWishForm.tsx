@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Pencil, Check, X } from "lucide-react";
+import { Pencil, Check, X, Trash2 } from "lucide-react";
 import { ref, push, onValue, update, remove } from "firebase/database";
 import { db } from "@/lib/firebase";
 
@@ -11,7 +11,7 @@ const BirthdayWishForm = () => {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editMessage, setEditMessage] = useState("");
@@ -43,7 +43,7 @@ const BirthdayWishForm = () => {
         message: message.trim(),
         emoji: "💌"
       });
-      
+
       setName("");
       setMessage("");
       setSubmitted(true);
@@ -72,6 +72,13 @@ const BirthdayWishForm = () => {
 
   const cancelEdit = () => {
     setEditingId(null);
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this wish?")) {
+      const wishRef = ref(db, `wishes/${id}`);
+      remove(wishRef);
+    }
   };
 
   return (
@@ -109,7 +116,7 @@ const BirthdayWishForm = () => {
                 {editingId === wish.id ? (
                   <div className="space-y-3">
                     <span className="text-3xl block mb-2">{wish.emoji}</span>
-                    <textarea 
+                    <textarea
                       value={editMessage}
                       onChange={(e) => setEditMessage(e.target.value)}
                       className="w-full px-3 py-2 rounded-lg bg-muted/50 border border-border/50 text-foreground font-body focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none text-lg italic"
@@ -117,7 +124,7 @@ const BirthdayWishForm = () => {
                     />
                     <div className="flex items-center gap-2">
                       <span className="font-display text-primary text-xl">—</span>
-                      <input 
+                      <input
                         type="text"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
@@ -125,23 +132,32 @@ const BirthdayWishForm = () => {
                       />
                     </div>
                     <div className="flex justify-end gap-2 pt-2">
-                       <button onClick={cancelEdit} className="p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors" title="Cancel">
-                         <X size={18} />
-                       </button>
-                       <button onClick={() => saveEdit(wish.id as string)} className="p-2 rounded-full hover:bg-primary/20 text-primary transition-colors" title="Save">
-                         <Check size={18} />
-                       </button>
+                      <button onClick={cancelEdit} className="p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors" title="Cancel">
+                        <X size={18} />
+                      </button>
+                      <button onClick={() => saveEdit(wish.id as string)} className="p-2 rounded-full hover:bg-primary/20 text-primary transition-colors" title="Save">
+                        <Check size={18} />
+                      </button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <button 
-                      onClick={() => handleEdit(wish)}
-                      className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-primary transition-all duration-300"
-                      title="Edit Wish"
-                    >
-                      <Pencil size={18} />
-                    </button>
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 flex gap-2 transition-all duration-300">
+                      <button
+                        onClick={() => handleEdit(wish)}
+                        className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
+                        title="Edit Wish"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(wish.id as string)}
+                        className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-destructive transition-colors"
+                        title="Delete Wish"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                     <span className="text-3xl block mb-3">{wish.emoji}</span>
                     <p className="font-body text-foreground/90 text-lg italic mb-4 leading-relaxed whitespace-pre-wrap">
                       "{wish.message}"
