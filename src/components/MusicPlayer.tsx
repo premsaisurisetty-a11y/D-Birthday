@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
-// Replace this URL with your own music file path or URL
-const MUSIC_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+const MUSIC_URL = "/music/background.mp3";
 
 const MusicPlayer = () => {
   const [isMuted, setIsMuted] = useState(true);
