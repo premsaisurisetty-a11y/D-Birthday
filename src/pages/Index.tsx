@@ -1,6 +1,5 @@
 import HeroSection from "@/components/HeroSection";
 import MemoriesGallery from "@/components/MemoriesGallery";
-import LoveQuestion from "@/components/LoveQuestion";
 import LoveLetter from "@/components/LoveLetter";
 import BirthdaySurprise from "@/components/BirthdaySurprise";
 import ReasonsILoveYou from "@/components/ReasonsILoveYou";
@@ -28,7 +27,7 @@ const Index = () => {
       <AnimatePresence>
         {isLoading && <LoadingScreen key="loading" />}
       </AnimatePresence>
-      
+
       {!isLoading && (
         <>
           <FloatingHearts />
@@ -36,7 +35,6 @@ const Index = () => {
           <HeroSection />
           <BirthdaySurprise />
           <MemoriesGallery />
-          <LoveQuestion />
           <LoveLetter />
           <ReasonsILoveYou />
           <CountdownTimer />
