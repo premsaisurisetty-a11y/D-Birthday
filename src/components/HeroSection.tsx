@@ -4,7 +4,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
   const scrollToMemories = () => {
-    document.getElementById("memories")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("surprise")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const balloons = useMemo(() =>

@@ -2,29 +2,31 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const CountdownTimer = () => {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isOver, setIsOver] = useState(false);
 
   useEffect(() => {
-    const getEndOfDay = () => {
+    const getTargetDate = () => {
       const now = new Date();
-      const end = new Date(now);
-      end.setHours(23, 59, 59, 999);
-      return end;
+      // We only count down to March 2nd of the current year.
+      // E.g., once March 2nd 2026 hits, it stops and stays at 0.
+      return new Date(now.getFullYear(), 2, 2, 0, 0, 0, 0);
     };
 
     const update = () => {
       const now = new Date();
-      const end = getEndOfDay();
+      const end = getTargetDate();
       const diff = end.getTime() - now.getTime();
 
       if (diff <= 0) {
         setIsOver(true);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         return;
       }
 
       setTimeLeft({
-        hours: Math.floor(diff / (1000 * 60 * 60)),
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
         minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
         seconds: Math.floor((diff % (1000 * 60)) / 1000),
       });
@@ -36,6 +38,7 @@ const CountdownTimer = () => {
   }, []);
 
   const timeUnits = [
+    { label: "Days", value: timeLeft.days },
     { label: "Hours", value: timeLeft.hours },
     { label: "Minutes", value: timeLeft.minutes },
     { label: "Seconds", value: timeLeft.seconds },
@@ -51,15 +54,14 @@ const CountdownTimer = () => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="font-display text-3xl md:text-5xl text-foreground mb-4">
-            {isOver ? "Birthday's Over! 🥺" : "Birthday Countdown ⏰"}
+            {isOver ? "Happy Birthday! 🎉" : "Birthday Countdown ⏰"}
           </h2>
           <p className="text-muted-foreground font-body text-lg italic mb-10">
-            {isOver ? "But our love continues forever! ❤️" : "Make every moment count!"}
+            {isOver ? "It's finally here! Enjoy your special day! ❤️" : "Make every moment count!"}
           </p>
         </motion.div>
 
-        {!isOver && (
-          <div className="flex justify-center gap-4 md:gap-6">
+        <div className="flex justify-center flex-wrap gap-4 md:gap-6">
             {timeUnits.map((unit, i) => (
               <motion.div
                 key={unit.label}
@@ -78,7 +80,6 @@ const CountdownTimer = () => {
               </motion.div>
             ))}
           </div>
-        )}
       </div>
     </section>
   );

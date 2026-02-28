@@ -1,5 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ref, set, onValue } from "firebase/database";
+import { db } from "@/lib/firebase";
+import { Pencil } from "lucide-react";
 
 const CANDLE_COUNT = 5;
 
@@ -7,6 +10,20 @@ const BirthdaySurprise = () => {
   const [showSurprise, setShowSurprise] = useState(false);
   const [candles, setCandles] = useState(Array(CANDLE_COUNT).fill(true));
   const [confettiBurst, setConfettiBurst] = useState(false);
+  const [premWish, setPremWish] = useState("");
+  const [premWishSubmitted, setPremWishSubmitted] = useState(false);
+
+  useEffect(() => {
+    const wishRef = ref(db, 'prem_wish');
+    const unsubscribe = onValue(wishRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data && data.message) {
+        setPremWish(data.message);
+        setPremWishSubmitted(true);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const blowCandle = (index: number) => {
     setCandles(prev => {
@@ -23,7 +40,7 @@ const BirthdaySurprise = () => {
   };
 
   return (
-    <section className="py-24 md:py-32 px-6 relative overflow-hidden">
+    <section id="surprise" className="py-24 md:py-32 px-6 relative overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
       </div>
@@ -124,13 +141,60 @@ const BirthdaySurprise = () => {
             ))}
           </div>
           {candles.every(c => !c) && (
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="font-display text-2xl text-accent mt-4"
+              className="mt-6 flex flex-col items-center w-full"
             >
-              🎉 Make a wish, Delisha! 🎉
-            </motion.p>
+              <p className="font-display text-2xl text-accent mb-6">
+                🎉 Make a wish, Delisha! 🎉
+              </p>
+              
+              {!premWishSubmitted ? (
+                <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                  <h3 className="font-display text-xl text-primary mb-3">Write A Wish To Prem 💌</h3>
+                  <textarea
+                    value={premWish}
+                    onChange={(e) => setPremWish(e.target.value)}
+                    placeholder="Your special message for Prem..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border/50 text-foreground font-body placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none mb-4"
+                  />
+                  <button
+                    onClick={() => {
+                      if (premWish.trim()) {
+                        const wishRef = ref(db, 'prem_wish');
+                        set(wishRef, {
+                          message: premWish.trim()
+                        });
+                        setPremWishSubmitted(true);
+                      }
+                    }}
+                    className="w-full glass-card py-2 text-primary font-display text-lg hover:glow-pink transition-all duration-300 cursor-pointer"
+                  >
+                    Send Wish 💕
+                  </button>
+                </div>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full max-w-md glass-card p-6 border border-primary/30 relative group mt-4"
+                >
+                  <button 
+                    onClick={() => setPremWishSubmitted(false)}
+                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-primary transition-all duration-300"
+                    title="Edit Wish"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <p className="font-body text-foreground/90 text-lg italic mb-4 leading-relaxed whitespace-pre-wrap mt-2">
+                    "{premWish}"
+                  </p>
+                  <p className="font-display text-primary text-xl glow-pink">— Prem's Special Wish Received 💕</p>
+                </motion.div>
+              )}
+            </motion.div>
           )}
         </motion.div>
 
