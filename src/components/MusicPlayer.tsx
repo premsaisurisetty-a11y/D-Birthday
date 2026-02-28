@@ -1,42 +1,77 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
+import { Music, VolumeX } from "lucide-react";
 
 const MUSIC_URL = "/music/background.mp3";
 
 const MusicPlayer = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const hasStarted = useRef(false);
-
-  const startPlayback = useCallback(() => {
-    if (audioRef.current && !hasStarted.current) {
-      hasStarted.current = true;
-      audioRef.current.muted = false;
-      audioRef.current.volume = 1;
-      audioRef.current.play().catch(() => {});
-      document.removeEventListener("click", startPlayback);
-      document.removeEventListener("touchstart", startPlayback);
-      document.removeEventListener("scroll", startPlayback);
-    }
-  }, []);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 1;
-      audioRef.current.play().then(() => {
-        hasStarted.current = true;
-      }).catch(() => {
-        document.addEventListener("click", startPlayback);
-        document.addEventListener("touchstart", startPlayback);
-        document.addEventListener("scroll", startPlayback);
-      });
-    }
-    return () => {
-      document.removeEventListener("click", startPlayback);
-      document.removeEventListener("touchstart", startPlayback);
-      document.removeEventListener("scroll", startPlayback);
+    const playAudio = async () => {
+      try {
+        if (audioRef.current) {
+          audioRef.current.volume = 1;
+          await audioRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (err) {
+        console.log("Autoplay prevented by browser, waiting for user interaction");
+        setIsPlaying(false);
+      }
     };
-  }, [startPlayback]);
 
-  return <audio ref={audioRef} src={MUSIC_URL} loop />;
+    // Try to auto-play
+    playAudio();
+
+    // Secondary attempt on first interaction
+    const handleInteraction = () => {
+      if (!isPlaying && audioRef.current) {
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch(() => { });
+      }
+      document.removeEventListener("click", handleInteraction);
+      document.removeEventListener("touchstart", handleInteraction);
+    };
+
+    document.addEventListener("click", handleInteraction);
+    document.addEventListener("touchstart", handleInteraction);
+
+    return () => {
+      document.removeEventListener("click", handleInteraction);
+      document.removeEventListener("touchstart", handleInteraction);
+    };
+  }, [isPlaying]);
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
+      }
+    }
+  };
+
+  return (
+    <>
+      <audio ref={audioRef} src={MUSIC_URL} loop />
+      <button
+        onClick={togglePlay}
+        className="fixed bottom-6 left-6 z-50 p-4 rounded-full bg-primary/20 backdrop-blur-md border border-primary/30 text-primary hover:bg-primary/30 transition-all duration-300 hover:scale-110 active:scale-95"
+        style={{ boxShadow: "0 0 20px rgba(255, 105, 180, 0.4)" }}
+        title={isPlaying ? "Pause Music" : "Play Music"}
+      >
+        {isPlaying ? (
+          <Music className="w-6 h-6 animate-pulse" />
+        ) : (
+          <VolumeX className="w-6 h-6 text-muted-foreground" />
+        )}
+      </button>
+    </>
+  );
 };
 
 export default MusicPlayer;
