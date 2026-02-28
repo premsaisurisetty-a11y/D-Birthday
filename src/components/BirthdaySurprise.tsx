@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, remove } from "firebase/database";
 import { db } from "@/lib/firebase";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 const CANDLE_COUNT = 5;
 
@@ -20,6 +20,9 @@ const BirthdaySurprise = () => {
       if (data && data.message) {
         setPremWish(data.message);
         setPremWishSubmitted(true);
+      } else {
+        setPremWish("");
+        setPremWishSubmitted(false);
       }
     });
     return () => unsubscribe();
@@ -149,7 +152,7 @@ const BirthdaySurprise = () => {
               <p className="font-display text-2xl text-accent mb-6">
                 🎉 Make a wish, Delisha! 🎉
               </p>
-              
+
               {!premWishSubmitted ? (
                 <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
                   <h3 className="font-display text-xl text-primary mb-3">Write A Wish To Prem 💌</h3>
@@ -176,18 +179,30 @@ const BirthdaySurprise = () => {
                   </button>
                 </div>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="w-full max-w-md glass-card p-6 border border-primary/30 relative group mt-4"
                 >
-                  <button 
-                    onClick={() => setPremWishSubmitted(false)}
-                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-primary transition-all duration-300"
-                    title="Edit Wish"
-                  >
-                    <Pencil size={18} />
-                  </button>
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <button
+                      onClick={() => setPremWishSubmitted(false)}
+                      className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-primary transition-all duration-300"
+                      title="Edit Wish"
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        const wishRef = ref(db, 'prem_wish');
+                        remove(wishRef);
+                      }}
+                      className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-destructive transition-all duration-300"
+                      title="Delete Wish"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                   <p className="font-body text-foreground/90 text-lg italic mb-4 leading-relaxed whitespace-pre-wrap mt-2">
                     "{premWish}"
                   </p>
