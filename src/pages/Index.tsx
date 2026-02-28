@@ -1,12 +1,23 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import HeroSection from "@/components/HeroSection";
+import MemoriesGallery from "@/components/MemoriesGallery";
+import LoveLetter from "@/components/LoveLetter";
+import BirthdaySurprise from "@/components/BirthdaySurprise";
+import ReasonsILoveYou from "@/components/ReasonsILoveYou";
+import FinalMessage from "@/components/FinalMessage";
+import FloatingHearts from "@/components/FloatingHearts";
+import MusicPlayer from "@/components/MusicPlayer";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="relative bg-background min-h-screen overflow-x-hidden">
+      <FloatingHearts />
+      <MusicPlayer />
+      <HeroSection />
+      <MemoriesGallery />
+      <LoveLetter />
+      <BirthdaySurprise />
+      <ReasonsILoveYou />
+      <FinalMessage />
     </div>
   );
 };
