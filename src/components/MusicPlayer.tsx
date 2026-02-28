@@ -33,14 +33,23 @@ const MusicPlayer = () => {
       }
       document.removeEventListener("click", handleInteraction);
       document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("touchmove", handleInteraction);
+      document.removeEventListener("scroll", handleInteraction);
+      document.removeEventListener("wheel", handleInteraction);
     };
 
     document.addEventListener("click", handleInteraction);
     document.addEventListener("touchstart", handleInteraction);
+    document.addEventListener("touchmove", handleInteraction);
+    document.addEventListener("scroll", handleInteraction);
+    document.addEventListener("wheel", handleInteraction);
 
     return () => {
       document.removeEventListener("click", handleInteraction);
       document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("touchmove", handleInteraction);
+      document.removeEventListener("scroll", handleInteraction);
+      document.removeEventListener("wheel", handleInteraction);
     };
   }, [isPlaying]);
 
