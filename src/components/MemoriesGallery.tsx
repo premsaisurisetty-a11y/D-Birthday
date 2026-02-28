@@ -28,6 +28,9 @@ const MemoriesGallery = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
+          <p className="font-display text-2xl md:text-3xl text-primary mb-2">
+            Delisha & Prem 💕
+          </p>
           <h2 className="font-display text-4xl md:text-6xl text-foreground mb-4">
             Our Memories 📸
           </h2>
