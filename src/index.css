@@ -152,6 +152,17 @@
     animation: sparkle var(--duration, 3s) ease-in-out var(--delay, 0s) infinite;
   }
 
+  @keyframes float-balloon {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.9; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(-110vh) rotate(15deg); opacity: 0; }
+  }
+
+  .animate-float-balloon {
+    animation: float-balloon var(--duration, 10s) ease-in-out var(--delay, 0s) infinite;
+  }
+
   .animate-gentle-pulse {
     animation: gentle-pulse 3s ease-in-out infinite;
   }
