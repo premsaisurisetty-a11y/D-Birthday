@@ -6,6 +6,7 @@ import memory2 from "@/assets/memory-2.png";
 import memory3 from "@/assets/memory-3.png";
 import memory4 from "@/assets/memory-4.png";
 import memory5 from "@/assets/memory-5.jpg";
+import memory6 from "@/assets/memory-6.png";
 
 const memories = [
   { id: 1, src: memory1, caption: "The day you made my world brighter ☀️", rotate: "-3deg" },
@@ -13,6 +14,7 @@ const memories = [
   { id: 3, src: memory3, caption: "Our little adventures together 🌸", rotate: "-1deg" },
   { id: 4, src: memory4, caption: "The moment I knew you were the one 💫", rotate: "3deg" },
   { id: 5, src: memory5, caption: "Every second with you is magic 🌙", rotate: "-2deg" },
+  { id: 6, src: memory6, caption: "My favorite person in the world 💕", rotate: "1deg" },
 ];
 
 const MemoriesGallery = () => {
