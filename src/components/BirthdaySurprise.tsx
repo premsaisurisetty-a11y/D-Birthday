@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ref, set, onValue, remove } from "firebase/database";
 import { db } from "@/lib/firebase";
 import { Pencil, Trash2 } from "lucide-react";
+import Cake from "./Cake";
 
 const CANDLE_COUNT = 5;
 
@@ -76,14 +77,6 @@ const BirthdaySurprise = () => {
       </AnimatePresence>
 
       <div className="max-w-3xl mx-auto text-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
-          <span className="text-8xl md:text-9xl block mb-8">🎂</span>
-        </motion.div>
 
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
@@ -108,40 +101,21 @@ const BirthdaySurprise = () => {
 
         {/* Birthday Cake with Candles */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.8 }}
           className="mb-12"
         >
-          <p className="font-display text-xl text-primary mb-4">
-            Tap the candles to blow them out! 🕯️
-          </p>
-          <div className="flex justify-center gap-6 md:gap-8 mb-4">
-            {candles.map((lit, i) => (
-              <motion.div
-                key={i}
-                className="flex flex-col items-center cursor-pointer"
-                onClick={() => blowCandle(i)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <AnimatePresence>
-                  {lit && (
-                    <motion.span
-                      initial={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0, y: -20 }}
-                      transition={{ duration: 0.5 }}
-                      className="text-2xl md:text-3xl animate-gentle-pulse"
-                    >
-                      🔥
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-                {!lit && <span className="text-2xl md:text-3xl opacity-30">💨</span>}
-                <span className="text-3xl md:text-4xl">🕯️</span>
-              </motion.div>
-            ))}
+          <div className="flex flex-col items-center">
+            <p className="font-display text-xl text-primary mb-2">
+              Tap the candles to blow them out! 🕯️
+            </p>
+            <Cake
+              candles={candles}
+              onBlowCandle={blowCandle}
+              allBlown={candles.every(c => !c)}
+            />
           </div>
           {candles.every(c => !c) && (
             <motion.div
