@@ -4,11 +4,12 @@ interface CakeProps {
     candles: boolean[];
     onBlowCandle: (index: number) => void;
     allBlown: boolean;
+    isCut: boolean;
 }
 
-const Cake = ({ candles, onBlowCandle, allBlown }: CakeProps) => {
+const Cake = ({ candles, onBlowCandle, allBlown, isCut }: CakeProps) => {
     return (
-        <div className="relative flex flex-col items-center justify-center py-20 pb-10">
+        <div className="relative flex flex-col items-center justify-center py-20 pb-10 scale-90 md:scale-100">
             {/* Plate */}
             <div className="absolute bottom-0 w-64 h-4 bg-muted/30 rounded-full blur-[2px] border border-white/10" />
 
@@ -17,7 +18,12 @@ const Cake = ({ candles, onBlowCandle, allBlown }: CakeProps) => {
                 {/* Top Layer */}
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    animate={{
+                        y: isCut ? -10 : 0,
+                        opacity: 1,
+                        rotateX: isCut ? 5 : 0
+                    }}
+                    transition={{ type: "spring", stiffness: 100 }}
                     className="relative w-32 h-16 bg-[#ff85a2] rounded-t-3xl border-b-4 border-[#f06292] z-30 shadow-lg"
                     style={{ background: "linear-gradient(to bottom, #ff85a2, #f06292)" }}
                 >
@@ -27,15 +33,24 @@ const Cake = ({ candles, onBlowCandle, allBlown }: CakeProps) => {
                     <div className="absolute -bottom-1 left-12 w-3 h-4 bg-[#ff85a2] rounded-full z-10" />
                     <div className="absolute -bottom-3 left-20 w-4 h-8 bg-[#ff85a2] rounded-full z-10" />
 
+                    {/* Cut Line */}
+                    {isCut && (
+                        <motion.div
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[#d81b60]/50 z-40 origin-top"
+                        />
+                    )}
+
                     {/* Candles on Top */}
                     <div className="absolute -top-12 inset-x-0 flex justify-center gap-4 px-2">
                         {candles.map((lit, i) => (
                             <motion.div
                                 key={i}
                                 className="relative flex flex-col items-center cursor-pointer"
-                                onClick={() => onBlowCandle(i)}
-                                whileHover={{ scale: 1.1, y: -5 }}
-                                whileTap={{ scale: 0.9 }}
+                                onClick={() => !isCut && onBlowCandle(i)}
+                                whileHover={!isCut ? { scale: 1.1, y: -5 } : {}}
+                                whileTap={!isCut ? { scale: 0.9 } : {}}
                             >
                                 <AnimatePresence>
                                     {lit && (
@@ -63,27 +78,33 @@ const Cake = ({ candles, onBlowCandle, allBlown }: CakeProps) => {
                     transition={{ delay: 0.1 }}
                     className="w-40 h-16 bg-[#f48fb1] border-b-4 border-[#e91e63] z-20 -mt-2 shadow-lg"
                     style={{ background: "linear-gradient(to bottom, #f48fb1, #ec407a)" }}
-                />
+                >
+                    {isCut && (
+                        <motion.div
+                            initial={{ scaleY: 0 }}
+                            animate={{ scaleY: 1 }}
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[#d81b60]/50 z-40 origin-top"
+                        />
+                    )}
+                </motion.div>
 
                 {/* Bottom Layer */}
                 <motion.div
                     initial={{ y: 60, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="w-48 h-20 bg-[#f06292] rounded-b-xl border-b-8 border-[#d81b60] z-10 -mt-2 shadow-2xl"
+                    className="w-48 h-20 bg-[#f06292] rounded-b-xl border-b-8 border-[#d81b60] z-10 -mt-2 shadow-2xl relative"
                     style={{ background: "linear-gradient(to bottom, #f06292, #e91e63)" }}
-                />
-            </div>
-
-            {allBlown && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="absolute -top-10 font-display text-3xl text-primary glow-pink text-center whitespace-nowrap"
                 >
-                    ✨ Happy Birthday! ✨
+                    {isCut && (
+                        <motion.div
+                            initial={{ scaleY: 0 }}
+                            animate={{ scaleY: 1 }}
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-[4px] h-full bg-[#ad1457]/50 z-40 origin-top"
+                        />
+                    )}
                 </motion.div>
-            )}
+            </div>
 
             {/* Sprinkles container */}
             <div className="absolute inset-0 pointer-events-none">

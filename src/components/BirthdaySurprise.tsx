@@ -13,6 +13,7 @@ const BirthdaySurprise = () => {
   const [confettiBurst, setConfettiBurst] = useState(false);
   const [premWish, setPremWish] = useState("");
   const [premWishSubmitted, setPremWishSubmitted] = useState(false);
+  const [isCut, setIsCut] = useState(false);
 
   useEffect(() => {
     const wishRef = ref(db, 'prem_wish');
@@ -108,16 +109,31 @@ const BirthdaySurprise = () => {
           className="mb-12"
         >
           <div className="flex flex-col items-center">
-            <p className="font-display text-xl text-primary mb-2">
-              Tap the candles to blow them out! 🕯️
+            <p className="font-display text-2xl text-primary mb-4 h-8">
+              {candles.every(c => !c) ? "✨ Happy Birthday, Delisha! ✨" : "Tap the candles to blow them out! 🕯️"}
             </p>
             <Cake
               candles={candles}
               onBlowCandle={blowCandle}
               allBlown={candles.every(c => !c)}
+              isCut={isCut}
             />
           </div>
-          {candles.every(c => !c) && (
+
+          {candles.every(c => !c) && !isCut && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsCut(true)}
+              className="mt-4 px-6 py-2 bg-accent text-accent-foreground font-display text-xl rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Cut the Cake 🔪
+            </motion.button>
+          )}
+
+          {isCut && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -188,7 +204,7 @@ const BirthdaySurprise = () => {
         </motion.div>
 
         {/* Surprise Button */}
-        {!showSurprise && candles.every(c => !c) ? (
+        {!showSurprise && isCut ? (
           <motion.button
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
