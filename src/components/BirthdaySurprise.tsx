@@ -188,7 +188,7 @@ const BirthdaySurprise = () => {
         </motion.div>
 
         {/* Surprise Button */}
-        {!showSurprise ? (
+        {!showSurprise && candles.every(c => !c) ? (
           <motion.button
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
